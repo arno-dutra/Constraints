@@ -5,8 +5,8 @@ class EvaluateConstraints(_BaseMaster):
     """
     Tag master
     """
-    def __init__(self, path, constraints, name="EvaluateConstraints"):
-        super().__init__(name, path)
+    def __init__(self, constraints, name="EvaluateConstraints"):
+        super().__init__(name)
 
         self.constraints = constraints
 

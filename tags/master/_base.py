@@ -2,19 +2,18 @@
 
 
 class _BaseMaster:
-    def __init__(self, name, path):
+    def __init__(self, name):
         self.name = name
-        self.path = path
         self.answer = None
 
-    def read_answer(self):
+    def read_answer(self, path):
         """
         Read the answer message from the file
         """
-        f = open(self.path, "r")
+        f = open(path, "r")
 
         lines = f.readlines()  # Skip the first line
-        
+
         f.close()
 
         lines = lines[f.index("=" * 100 + "\n") + 1:]  # Skip input message

@@ -28,4 +28,4 @@ class ArnoConstraintsManager(BaseConstraintsManager):
         
         for tag in self.tags:
             if isinstance(tag, EvaluateConstraints):
-                return tag.score()
+                return tag.score(self.tags.path)
