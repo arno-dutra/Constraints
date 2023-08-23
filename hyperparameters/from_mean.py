@@ -10,7 +10,7 @@ class FromMeanHyperparameter(BaseHyperparameter):
         
         self.previous_value = mean
 
-    def get_value(self):
-        if not self.frozen:
+    def get_value(self, next: bool = True):
+        if not self.frozen and next:
             self.previous_value = np.random.normal(self.mean, self.std)
         return self.previous_value

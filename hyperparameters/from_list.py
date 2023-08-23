@@ -13,8 +13,8 @@ class FromListHyperparameter(BaseHyperparameter):
 
         self.i = 0
 
-    def get_value(self):
-        if not self.frozen:
+    def get_value(self, next: bool = True):
+        if not self.frozen and next:
             
             self.i += 1
             if self.i + 1 >= len(self.values):

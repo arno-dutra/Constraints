@@ -1,4 +1,4 @@
-from contraintes.generator._base import ConstraintsObject
+from contraintes.constraints._base import ConstraintsObject
 import numpy as np
 
 
@@ -29,7 +29,7 @@ class UniformConstraintsGenerator(ConstraintsObject):
             raise ValueError("Either X or y must be provided")
 
 
-    def generate_must_link(self, nb_constraints, with_replacement=False, based_on_y=True, no_tautology=True):
+    def generate_must_link(self, nb_constraints, with_replacement=False, based_on_y=True, no_tautology=False):
         """
         Generate must link constraints
 
@@ -41,7 +41,7 @@ class UniformConstraintsGenerator(ConstraintsObject):
             If True, the same point can have multiple constraints
         based_on_y : bool, default = True
             If True, the constraints are generated based on the labels
-        no_tautology : bool, default = True
+        no_tautology : bool, default = False
             If True, the constraints are generated without tautology, i.e. a point cannot be linked to itself
         """
 
@@ -91,11 +91,11 @@ class UniformConstraintsGenerator(ConstraintsObject):
 
                 c_b = np.choice(np.where(self.y != self.y[c_a]), 1)
 
-                self.add_must_link(c_a, c_b)
+                self.add_cannot_link(c_a, c_b)
         else:
             for c_a in points_to_constraint:
 
                 c_b = np.choice(points_to_constraint - {c_a}, 1)
 
-                self.add_must_link(c_a, c_b)
+                self.add_cannot_link(c_a, c_b)
 
