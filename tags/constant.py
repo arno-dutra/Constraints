@@ -16,8 +16,8 @@ class ConstantSender(_BaseTag):
         >>> args = parser.parse_args()
         >>> ...
         >>> ConstantSender(path=args.constraints_manager_messenger_path, ...)
-    y_pred: np.ndarray
-        predicted labels
+    variables: dict
+        variables to send
     """
 
     def __init__(self, 
