@@ -1,0 +1,17 @@
+{"tags": {"ConstantSender": {"ask_for": ["model_file_name", "hyperparameters_hash"]}, "EvaluateConstraints": {"points_to_predict_class": [0, 1, 3, 7, 11, 12, 13, 14, 16, 17, 18, 19]}}}
+====================================================================================================
+
+{"ConstantSender": {"var": "__encoder_MLPEncoder_Chinatown_-1438117352985331826.h5"}}
+{"ConstantSender": {"var": "-1438117352985331826"}}
+{"EvaluateConstraints": {"point": 0, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 1, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 3, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 7, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 11, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 12, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 13, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 14, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 16, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 17, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 18, "y_pred": 0}}
+{"EvaluateConstraints": {"point": 19, "y_pred": 0}}
