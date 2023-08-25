@@ -39,4 +39,4 @@ class ConstantSender(_BaseTag):
     def __call__(self):
 
         for var in self.msg["ask_for"]:
-            self.send(var=self.variables[var])
+            self.send(**{var: self.variables[var]})

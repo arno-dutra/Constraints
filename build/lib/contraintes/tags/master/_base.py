@@ -1,4 +1,4 @@
-
+import json
 
 
 class _BaseMaster:
@@ -16,7 +16,7 @@ class _BaseMaster:
 
         f.close()
 
-        lines = lines[f.index("=" * 100 + "\n") + 1:]  # Skip input message
+        lines = lines[lines.index("=" * 100 + "\n") + 2:]  # Skip input message
         l = []
         for line in lines:
             if line == "\n":

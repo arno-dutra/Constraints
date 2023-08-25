@@ -1,7 +1,7 @@
 from contraintes.manager._base import BaseConstraintsManager
 from contraintes.constraints._base import ConstraintsObject
 from contraintes.hyperparameters.handler import HyperparametersHandler
-from contraintes.tags.handler import TagsHandler
+from contraintes.tags.master.handler import TagsHandler
 from contraintes.tags.master.evaluate_constraints import EvaluateConstraints
 
 
@@ -13,10 +13,11 @@ class ArnoConstraintsManager(BaseConstraintsManager):
         constraints: ConstraintsObject = None, 
         ae_hyperparameters_handler: HyperparametersHandler = None,  
         cl_hyperparameters_handler: HyperparametersHandler = None,
-        tags: TagsHandler = None
+        tags: TagsHandler = None,
+        check_overconstrained=True
         ):
 
-        super().__init__(constraints=constraints, path_to_pipeline=path_to_pipeline, tags=tags)
+        super().__init__(constraints=constraints, path_to_pipeline=path_to_pipeline, tags=tags, check_overconstrained=check_overconstrained)
 
         self.ae_hyperparameters_handler = ae_hyperparameters_handler
         self.cl_hyperparameters_handler = cl_hyperparameters_handler

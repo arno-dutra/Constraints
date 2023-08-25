@@ -15,7 +15,7 @@ class HyperparametersHandler:
 
 
     def get_hyperparameters(self, next: bool = True, verbose: bool = True):
-        datas = [[h, h.get_value(next)] for h in self.hyperparameters]
+        datas = [[h, h.get_value(next)] for h in self.hyperparameters.values()]
 
         if verbose:
             print(tabulate([[h.name, v] for h, v in datas], headers=['Hyperparameter', 'Value']))
@@ -28,4 +28,4 @@ class HyperparametersHandler:
         if hyperparameter.name in self.hyperparameters:
             raise ValueError("{hyperparameter.name} is already in the hyperparameters list")
 
-        self.hyperparameters.append(hyperparameter) 
+        self.hyperparameters.update({hyperparameter.name: hyperparameter}) 

@@ -1,0 +1,2 @@
+recursive-include contraintes *.py
+recursive-include contraintes *.c *.h *.pyx *.pxd *.pxi *.tp

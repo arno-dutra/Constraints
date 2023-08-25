@@ -1,4 +1,4 @@
-from contraintes.tags.master._base_master import _BaseMaster
+from contraintes.tags.master._base import _BaseMaster
 
 
 class ConstantSender(_BaseMaster):

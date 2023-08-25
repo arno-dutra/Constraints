@@ -1,4 +1,5 @@
 from contraintes.tags.master._base import _BaseMaster
+import json
 
 
 class TagsHandler:
@@ -7,7 +8,7 @@ class TagsHandler:
         self.path = path
         self.tags = []
 
-    def add_tag(self, tag: ):
+    def add_tag(self, tag):
         """
         Add a tag to the list of tags
         """
@@ -24,4 +25,7 @@ class TagsHandler:
 
         with open(self.path, "w") as f:
             f.write(json.dumps(msg) + "\n%(sep)s\n\n" % {"sep": "=" * 100})
+
+    def __iter__(self):
+        return iter(self.tags)
 

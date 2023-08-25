@@ -1,4 +1,4 @@
-
+import pycsp3
 
 
 class ConstraintsObject:
@@ -23,7 +23,7 @@ class ConstraintsObject:
             The set of points involved in the constraints.
         """
 
-        return set([i for i, j in self.must_link + self.cannot_link] + [j for i, j in self.must_link + self.cannot_link])
+        return list(set([i for i, j in self.must_link + self.cannot_link] + [j for i, j in self.must_link + self.cannot_link]))
 
     def is_respected(self, clustering, method="boolean"):
         """
@@ -48,7 +48,7 @@ class ConstraintsObject:
                 if method == "boolean":
                     return False
                 elif method == "count":
-                    c += 1
+                    c_ml += 1
                 else:
                     raise ValueError("Unknown method: {method}")
 
@@ -58,7 +58,7 @@ class ConstraintsObject:
                 if method == "boolean":
                     return False
                 elif method == "count":
-                    c += 1
+                    c_cl += 1
                 else:
                     raise ValueError("Unknown method: {method}")
 
@@ -84,17 +84,15 @@ class ConstraintsObject:
             True if it is impossible to respect all the constraints, False otherwise.
         """
 
-        import pycsp3 as p3
-
-        x = p3.VarArray(size=len(self.ids), dom=self.ids[:n_clusters])
+        x = pycsp3.VarArray(size=len(self.ids), dom={int(v) for v in self.ids[:n_clusters]})
 
         for i, j in self.must_link:
-            p3.satisfy(x[i] == x[j])
+            pycsp3.satisfy(x[i] == x[j])
 
         for i, j in self.cannot_link:
-            p3.satisfy(x[i] != x[j])
+            pycsp3.satisfy(x[i] != x[j])
 
-        return p3.solve() is p3.SAT
+        return pycsp3.solve() is pycsp3.SAT
     
     def __add__(self, other):
         """

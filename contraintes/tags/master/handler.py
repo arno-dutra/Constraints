@@ -1,4 +1,5 @@
 from contraintes.tags.master._base import _BaseMaster
+from contraintes.tags.master.constant import ConstantSender
 import json
 
 
@@ -28,4 +29,16 @@ class TagsHandler:
 
     def __iter__(self):
         return iter(self.tags)
+
+    def get(self, name):
+        """
+        return the value of the constant
+        """
+
+        for tag in self.tags:
+            if isinstance(tag, ConstantSender):
+                if name in tag.ask_for:
+                    return tag.get(name, path=self.path)
+
+    
 
