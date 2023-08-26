@@ -13,6 +13,9 @@ class ConstraintsObject:
     def add_cannot_link(self, i, j):
         self.cannot_link.append((i, j))
 
+    def get_constraints(self):
+        return {"must_link_constraints": str(self.must_link), "cannot_link_constraints": str(self.cannot_link)}
+
     def get_points(self):
         """
         Get the points involved in the constraints.

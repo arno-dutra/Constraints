@@ -22,8 +22,10 @@ contraintes/tags/__init__.py
 contraintes/tags/_base.py
 contraintes/tags/constant.py
 contraintes/tags/evaluate_constraints.py
+contraintes/tags/hash.py
 contraintes/tags/master/__init__.py
 contraintes/tags/master/_base.py
 contraintes/tags/master/constant.py
 contraintes/tags/master/evaluate_constraints.py
 contraintes/tags/master/handler.py
+contraintes/tags/master/hash.py

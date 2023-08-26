@@ -25,13 +25,13 @@ class ConstantSender(_BaseMaster):
 
         return self.name, datas
 
-    def get(self, name):
+    def get(self, name, path=None):
         """
         return the value of the constant
         """
         
         if self.answer is None:
-            self.read_answer()
+            self.read_answer(path)
 
         d = self.answer[0]
         for i in range(1, len(self.answer)):

@@ -1,5 +1,6 @@
 from contraintes.tags.master._base import _BaseMaster
 from contraintes.tags.master.constant import ConstantSender
+from contraintes.tags.master.hash import HashTag
 import json
 
 
@@ -24,8 +25,9 @@ class TagsHandler:
             tag_name, tag_message = tag.prepare_message()
             msg["tags"][tag_name] = tag_message
 
-        with open(self.path, "w") as f:
+        with open(self.get_path(), "w") as f:
             f.write(json.dumps(msg) + "\n%(sep)s\n\n" % {"sep": "=" * 100})
+        f.close()
 
     def __iter__(self):
         return iter(self.tags)
@@ -38,7 +40,24 @@ class TagsHandler:
         for tag in self.tags:
             if isinstance(tag, ConstantSender):
                 if name in tag.ask_for:
-                    return tag.get(name, path=self.path)
+                    return tag.get(name, path=self.get_path())
 
-    
+    def get_path(self):
+        return self.path % {"hash": self.get_hash()}
 
+    def get_hash(self):
+        """
+        return the hash of the hyperparameters
+        """
+        for tag in self.tags:
+            if isinstance(tag, HashTag):
+                return tag.get_hash()
+
+    def generate_hash(self, hyperparameters):
+        """
+        Generate the hash of the hyperparameters
+        """
+        for tag in self.tags:
+            if isinstance(tag, HashTag):
+                tag.set_hyperparameters(hyperparameters)
+                

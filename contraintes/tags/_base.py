@@ -23,7 +23,7 @@ class _BaseTag:
         txt = json.dumps(d) + '\n'
 
         with open(self.path, 'a') as f:
-            print(txt)
+            print("Sending datas :", txt)
             f.write(txt)
         
         f.close()
