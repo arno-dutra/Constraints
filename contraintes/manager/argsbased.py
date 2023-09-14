@@ -7,7 +7,7 @@ import json
 import os
 
 
-class ArnoConstraintsManager(BaseConstraintsManager):
+class ArgsBasedConstraintsManager(BaseConstraintsManager):
     
 
     def __init__(self, 
@@ -67,23 +67,35 @@ class ArnoConstraintsManager(BaseConstraintsManager):
                 print()
 
                 self.tags.send_message()
+        
+                _aeh = ""
+                for k, v in aeh.items():
+                    _aeh += f"--{k} {v} "
 
-                command = (f"python {self.path_to_pipeline} {dataset} {model} " \
-                    "--autoencoder-hyperparameters '%(aeh)s' " \
+
+                command = (f"python {self.path_to_pipeline} " \
+                    "%(aeh)s "
+                    "--hyperparameters_hash '%(hash)s' " \
                     "--clustering-hyperparameters '%(clh)s' " \
                     "--constraints-manager-messenger-path %(cmmp)s " \
                     "%(other)s" % 
                     {
-                        "aeh": json.dumps(aeh),
+                        "aeh": _aeh,
                         "clh": json.dumps(clh),
                         "cmmp": self.tags.get_path(),
-                        "other": o
+                        "other": o % {"hash": self.tags.get_hash()},
+                        "hash": self.tags.get_hash()
                     })
                 
                 os.system(command)
 
-                self.store(path=f"./local/__resultats_{model}.csv", where={"model_file_name": self.tags.get("model_file_name")}, score=self.score())
-                # self.store(path=f"./local/__resultats_{model}.csv", where={"model_file_name": self.tags.get("model_file_name")}, score=self.constraints.get_constraints())
+                print("/////////////////////////// Leaving subprocess ///////////////////////////")
+
+                self.store(path=f"./local/__resultats_{model}.csv", where={"hash": self.tags.get_hash()}, score=self.score())
+
+                print("/////////////////////////// Leaving storing ///////////////////////////")
+
+                # self.store(path=f"./local/__resultats_{model}.csv", where={"hash": self.tags.get_hash()}, score=self.constraints.get_constraints())
 
                 self.rename_dialogue(model=model, dataset=dataset)
 

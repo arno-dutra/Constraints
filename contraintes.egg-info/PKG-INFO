@@ -1,3 +1,5 @@
 Metadata-Version: 2.1
 Name: contraintes
 Version: 0.0.1
+Requires-Dist: numpy
+Requires-Dist: pycsp3

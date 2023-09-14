@@ -5,10 +5,11 @@ class EvaluateConstraints(_BaseMaster):
     """
     Tag master
     """
-    def __init__(self, constraints, name="EvaluateConstraints"):
+    def __init__(self, constraints, name="EvaluateConstraints", incremental=False):
         super().__init__(name)
 
         self.constraints = constraints
+        self.incremental = incremental
 
     def prepare_message(self):
         
@@ -32,6 +33,8 @@ class EvaluateConstraints(_BaseMaster):
                 points = d["point"]
                 y_pred = d["y_pred"]
                 clustering[points] = y_pred
-        results = self.constraints.is_respected(clustering, method="count")
+        results = self.constraints.is_respected(clustering, method="count", incremental=self.incremental)
+
+        results.update(self.constraints.get_constraints())
 
         return results

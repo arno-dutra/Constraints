@@ -3,7 +3,6 @@ from contraintes.constraints._base import ConstraintsObject
 from contraintes.hyperparameters.handler import HyperparametersHandler
 from contraintes.tags.master.handler import TagsHandler
 from contraintes.tags.master.evaluate_constraints import EvaluateConstraints
-import pandas as pd
 import json
 import os
 
@@ -25,56 +24,7 @@ class ArnoConstraintsManager(BaseConstraintsManager):
         self.ae_hyperparameters_handler = ae_hyperparameters_handler
         self.cl_hyperparameters_handler = cl_hyperparameters_handler
 
-    def score(self):
-        """
-        compute the score of the hyperparameters
-        """
-        
-        for tag in self.tags:
-            if isinstance(tag, EvaluateConstraints):
-                return tag.score(path=self.tags.get_path())
-
-    def store(self, path: str, where: dict, score: dict = {}):
-        """
-        store the score of the hyperparameters
-
-        Parameters
-        ----------
-        path : str
-            the path to the file where to store the score
-        where : str
-            the keys values to find the right entry in the file
-        score : dict
-            the score of the hyperparameters given by the score method
-        """
-        
-        df = pd.read_csv(path, sep=",", index_col=None)
-
-        for k,v in score.items():
-            df.loc[tuple([df[key] == value for key, value in where.items()] + [[k]])] = v
-
-        df.to_csv(path, sep=",", index=False)
-        
-    def get_hyperparameters_loop_size(self):
-        """
-        get the number of hyperparameters combinations
-        """
-        return self.ae_hyperparameters_handler.get_loop_size() * self.cl_hyperparameters_handler.get_loop_size()
-        
-    def rename_dialogue(self):
-        # Transform the name of the file from ./example/dialogue.json to 
-        # ./example/__dialogue_ResNetEncoder_MNIST_1234567890.json
-
-        a = self.tags.get("model_file_name")
-        a = a.split("_")
-        a[2] = ".".join(self.tags.get_path().split("/")[-1].split(".")[:-1])
-        a = "_".join(a)
-        ext = self.tags.get_path().split("/")[-1].split(".")[-1]
-        new_name = "/".join(self.tags.get_path().split("/")[:-1]) + f"/{a}.{ext}"
-
-        os.rename(self.tags.get_path(), new_name)
-    
-    def run_pipeline(self, model, dataset, other={}, new_hyperparameters=True):
+    def run_pipeline(self, model, dataset, other={}, new_hyperparameters=True, shuffle=True):
         """
         run the model pipeline
         """
@@ -101,31 +51,52 @@ class ArnoConstraintsManager(BaseConstraintsManager):
         elif new_hyperparameters == "iter":
             loop_size = self.ae_hyperparameters_handler.get_loop_size() * self.cl_hyperparameters_handler.get_loop_size()
             i = 1
-            for aeh in self.ae_hyperparameters_handler:
-                for clh in self.cl_hyperparameters_handler:
-                    print("="*100, f"Starting a new pipeline with hyperparameters set {i}/{loop_size}")
-                    
-                    self.tags.generate_hash(hyperparameters=[aeh, clh])
-                    self.tags.send_message()
+            for aeh, clh in self._iter(self.ae_hyperparameters_handler, self.cl_hyperparameters_handler, shuffle=shuffle):
+                print("="*100, f"Starting a new pipeline with hyperparameters set {i}/{loop_size}", end="")
+                
+                flag = True
+                while flag:
+                    try: 
 
-                    command = (f"python {self.path_to_pipeline} {dataset} {model} " \
-                        "--autoencoder-hyperparameters '%(aeh)s' " \
-                        "--clustering-hyperparameters '%(clh)s' " \
-                        "--constraints-manager-messenger-path %(cmmp)s " \
-                        "%(other)s" % 
-                        {
-                            "aeh": json.dumps(aeh),
-                            "clh": json.dumps(clh),
-                            "cmmp": self.tags.get_path(),
-                            "other": o
-                        })
-                    
-                    os.system(command)
+                        self.tags.generate_hash(hyperparameters=[aeh, clh])
 
-                    self.store(path=f"./local/__resultats_{model}.csv", where={"model_file_name": self.tags.get("model_file_name")}, score=self.score())
-                    self.store(path=f"./local/__resultats_{model}.csv", where={"model_file_name": self.tags.get("model_file_name")}, score=self.constraints.get_constraints())
+                        if self._run_already_done(model=model, dataset=dataset):
+                            print("  --> Pipeline with hash %(h)s already done : skipping" % {"h": self.tags.get_hash()})
+                            i += 1
+                            continue
+                        if self._run_already_in_progress():
+                            print("  --> Pipeline with hash %(h)s already in progress : skipping" % {"h": self.tags.get_hash()})
+                            i += 1
+                            continue
+                        print()
 
-                    self.rename_dialogue()
+                        self.tags.send_message()
 
-                    i += 1
-                    
+                        command = (f"python {self.path_to_pipeline} {dataset} {model} " \
+                            "--autoencoder-hyperparameters '%(aeh)s' " \
+                            "--clustering-hyperparameters '%(clh)s' " \
+                            "--constraints-manager-messenger-path %(cmmp)s " \
+                            "%(other)s" % 
+                            {
+                                "aeh": json.dumps(aeh),
+                                "clh": json.dumps(clh),
+                                "cmmp": self.tags.get_path(),
+                                "other": o
+                            })
+                        
+                        os.system(command)
+
+                        self.store(path=self.tags.get("path"), where={"model_file_name": self.tags.get("model_file_name")}, score=self.score())
+                        # self.store(path=f"./local/__resultats_{model}.csv", where={"model_file_name": self.tags.get("model_file_name")}, score=self.constraints.get_constraints())
+
+                        self.rename_dialogue(model=model, dataset=dataset)
+
+                        i += 1
+
+                    except Exception as e:
+                        print("  --> Pipeline with hash %(h)s failed : retrying" % {"h": self.tags.get_hash()})
+                        print("  -->", e)
+                        os.remove(self.tags.get_path())
+                        continue
+                    else:
+                        flag = False

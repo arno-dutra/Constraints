@@ -20,10 +20,18 @@ class _BaseTag:
     def send(self, **kwargs):
 
         d = {self.name: standardize_types(kwargs)}
-        txt = json.dumps(d) + '\n'
+        td = ""
+        while td == "":
+            td = json.dumps(d)
+            try:
+                json.loads(td)
+            except json.decoder.JSONDecodeError:
+                td = ""
+                print("Error while sending datas : retrying")
+        txt = td + '\n'
 
         with open(self.path, 'a') as f:
-            print("Sending datas :", txt)
+            # print("Sending datas :", txt)
             f.write(txt)
         
         f.close()

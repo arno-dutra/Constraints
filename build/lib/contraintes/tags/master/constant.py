@@ -30,8 +30,7 @@ class ConstantSender(_BaseMaster):
         return the value of the constant
         """
         
-        if self.answer is None:
-            self.read_answer(path)
+        self.read_answer(path)
 
         d = self.answer[0]
         for i in range(1, len(self.answer)):
